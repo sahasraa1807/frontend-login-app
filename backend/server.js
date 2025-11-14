@@ -1,4 +1,3 @@
-// backend/server.js
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
@@ -11,21 +10,24 @@ connectDB();
 
 const app = express();
 
-// Middleware
-app.use(cors());
+app.use(
+  cors({
+    origin: "https://mini-dashboard-project.vercel.app",  // your frontend live link
+    methods: ["GET", "POST"],
+    credentials: true,
+  })
+);
+
 app.use(express.json());
 
-// Base route for quick test
 app.get("/", (req, res) => res.send("✅ Backend server is running!"));
 
-// Auth routes
 app.use("/api/auth", authRoutes);
 
-// --- PROTECTED DASHBOARD ROUTE ---
 app.get("/api/dashboard", (req, res) => {
   const authHeader = req.headers.authorization;
 
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+  if (!authHeader?.startsWith("Bearer ")) {
     return res.status(401).json({ message: "Unauthorized: No token provided" });
   }
 
@@ -33,6 +35,7 @@ app.get("/api/dashboard", (req, res) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
     return res.status(200).json({
       message: `Welcome, ${decoded.email}!`,
       data: {
@@ -47,12 +50,13 @@ app.get("/api/dashboard", (req, res) => {
   }
 });
 
-// Global Error Handler
 app.use((err, req, res, next) => {
   console.error("Server Error:", err);
   res.status(500).json({ message: "Something went wrong" });
 });
 
-// Server listen
+
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+app.listen(PORT, () =>
+  console.log(`🚀 Server running live on port ${PORT}`)
+);
