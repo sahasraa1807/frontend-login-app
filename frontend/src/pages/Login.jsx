@@ -4,7 +4,6 @@ export default function Login() {
   const navigate = useNavigate();
 
   const handleLogin = () => {
-    // Skip backend for now; assume login success
     navigate("/dashboard");
   };
 
