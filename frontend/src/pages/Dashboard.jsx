@@ -1,36 +1,35 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import API from "../utils/api";
 
 export default function Dashboard() {
+  const [data, setData] = useState(null);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    if (!token) return navigate("/");
+
+    API.get("/dashboard", {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((res) => setData(res.data))
+      .catch(() => {
+        localStorage.removeItem("token");
+        navigate("/");
+      });
+  }, []);
+
   return (
-    <div className="dashboard-main">
-
-      <h1 className="dashboard-title">Dashboard</h1>
-
-      <div className="dashboard-cards">
-
-        <div className="glass-card dashboard-card">
-          <h2>Card 1</h2>
-          <p>Content here...</p>
-        </div>
-
-        <div className="glass-card dashboard-card">
-          <h2>Card 2</h2>
-          <p>Content here...</p>
-        </div>
-
-        <div className="glass-card dashboard-card">
-          <h2>Card 3</h2>
-          <p>Content here...</p>
-        </div>
-
-      </div>
-
-      <button className="logout-btn" onClick={() => navigate("/")}>
+    <div className="dashboard-wrapper">
+      <h1>Dashboard</h1>
+      <button className="logout-btn" onClick={() => {
+        localStorage.removeItem("token");
+        navigate("/");
+      }}>
         Logout
       </button>
-
     </div>
   );
 }

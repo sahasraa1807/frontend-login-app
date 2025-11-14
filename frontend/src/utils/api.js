@@ -1,8 +1,7 @@
-// frontend/src/utils/api.js
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
+  baseURL: "https://frontend-login-app.onrender.com/api",
 });
 
 export default API;

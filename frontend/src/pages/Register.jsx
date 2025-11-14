@@ -1,27 +1,60 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import API from "../utils/api";
 
 export default function Register() {
   const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
-  const handleRegister = () => {
-    navigate("/dashboard");
+  const handleRegister = async (e) => {
+    e.preventDefault();
+
+    if (!email || !password) {
+      return setError("All fields are required");
+    }
+
+    try {
+      const res = await API.post("/auth/register", { email, password });
+
+      setSuccess("Registration successful! Redirecting...");
+      setTimeout(() => navigate("/"), 1500);
+
+    } catch (err) {
+      setError(err.response?.data?.message || "Registration failed");
+    }
   };
 
   return (
-    <div className="center-page glass-card">
-      <div className="auth-card">
-        <h2>Register</h2>
+    <div className="glass-card auth-card">
+      <h2>Register</h2>
 
-        <input type="text" placeholder="Name" />
-        <input type="email" placeholder="Email" />
-        <input type="password" placeholder="Password" />
+      {error && <p style={{ color: "red", marginBottom: "10px" }}>{error}</p>}
+      {success && <p style={{ color: "lightgreen", marginBottom: "10px" }}>{success}</p>}
 
-        <button onClick={handleRegister} className="btn-grad">Register</button>
+      <input
+        type="email"
+        placeholder="Enter email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+      />
 
-        <p className="link-text">
-          Already have an account? <span onClick={() => navigate("/")}>Login</span>
-        </p>
-      </div>
+      <input
+        type="password"
+        placeholder="Enter password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+      />
+
+      <button className="btn-grad" onClick={handleRegister}>
+        Register
+      </button>
+
+      <p className="link-text">
+        Already have an account? <span onClick={() => navigate("/")}>Login</span>
+      </p>
     </div>
   );
 }
