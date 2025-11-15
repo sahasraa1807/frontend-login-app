@@ -15,6 +15,9 @@ export const protect = async (req, res, next) => {
     req.user = { id: decoded.id };
     next();
   } catch (err) {
+    // --- ADDED THIS LOG ---
+    console.error("AUTH MIDDLEWARE FAILED:", err);
+    // --------------------
     res.status(401).json({ message: "Not authorized, token failed" });
   }
 };

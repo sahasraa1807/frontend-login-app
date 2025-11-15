@@ -5,6 +5,10 @@ import User from "../models/User.js";
 const generateToken = (id) => jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "1d" });
 
 export const registerUser = async (req, res) => {
+  // --- ADDED THIS LOG ---
+  console.log("--- REGISTER ATTEMPT ---", req.body.email);
+  // -----------------------
+
   try {
     const { name, email, password, role } = req.body;
     const exists = await User.findOne({ email });
@@ -16,9 +20,9 @@ export const registerUser = async (req, res) => {
       user: { id: user._id, name: user.name, email: user.email, role: user.role }
     });
   } catch (err) {
-    // ---- THIS IS THE NEW LINE ----
-    console.error(err); 
-    // ----------------------------
+    // --- ENSURED THIS LOG IS HERE ---
+    console.error("REGISTER FAILED:", err); 
+    // --------------------------------
     res.status(500).json({ message: "Server error", error: err.message });
   }
 };
@@ -38,8 +42,8 @@ export const loginUser = async (req, res) => {
       user: { id: user._id, name: user.name, email: user.email, role: user.role }
     });
   } catch (err) {
-    // You should add logging here too
-    console.error(err);
+    // --- ENSURED THIS LOG IS HERE ---
+    console.error("LOGIN FAILED:", err);
     res.status(500).json({ message: "Server error", error: err.message });
   }
 };
@@ -50,8 +54,8 @@ export const getMe = async (req, res) => {
     const user = await User.findById(req.user.id).select("-password");
     res.json({ user });
   } catch (err) {
-    // And here
-    console.error(err);
+    // --- ENSURED THIS LOG IS HERE ---
+    console.error("GETME FAILED:", err);
     res.status(500).json({ message: "Server error", error: err.message });
   }
 };

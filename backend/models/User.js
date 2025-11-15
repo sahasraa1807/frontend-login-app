@@ -1,4 +1,3 @@
-// backend/models/User.js
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 
@@ -9,11 +8,21 @@ const userSchema = new mongoose.Schema({
   role: { type: String, default: "Frontend Intern" }
 }, { timestamps: true });
 
+// --- UPDATED PRE-SAVE HOOK ---
 userSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) return next();
-  const salt = await bcrypt.genSalt(10);
-  this.password = await bcrypt.hash(this.password, salt);
-  next();
+  if (!this.isModified("password")) {
+    return next();
+  }
+
+  try {
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+    next();
+  } catch (err) {
+    // --- THIS WILL LOG BCRYPT ERRORS ---
+    console.error("Error hashing password:", err);
+    next(err); // Pass the error to stop the save
+  }
 });
 
 userSchema.methods.matchPassword = async function (enteredPassword) {
