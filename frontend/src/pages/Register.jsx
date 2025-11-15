@@ -4,6 +4,11 @@ import API from "../utils/api";
 
 export default function Register() {
   const navigate = useNavigate();
+  
+  // --- ADDED THIS STATE ---
+  const [name, setName] = useState("");
+  // ------------------------
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -12,12 +17,16 @@ export default function Register() {
   const handleRegister = async (e) => {
     e.preventDefault();
 
-    if (!email || !password) {
+    // --- UPDATED VALIDATION ---
+    if (!name || !email || !password) {
       return setError("All fields are required");
     }
+    // --------------------------
 
     try {
-      const res = await API.post("/auth/register", { email, password });
+      // --- UPDATED API CALL ---
+      const res = await API.post("/auth/register", { name, email, password });
+      // ------------------------
 
       setSuccess("Registration successful! Redirecting...");
       setTimeout(() => navigate("/"), 1500);
@@ -33,6 +42,15 @@ export default function Register() {
 
       {error && <p style={{ color: "red", marginBottom: "10px" }}>{error}</p>}
       {success && <p style={{ color: "lightgreen", marginBottom: "10px" }}>{success}</p>}
+
+      {/* --- ADDED THIS INPUT --- */}
+      <input
+        type="text"
+        placeholder="Enter name"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+      />
+      {/* ------------------------ */}
 
       <input
         type="email"
