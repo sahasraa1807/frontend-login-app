@@ -18,7 +18,8 @@ const app = express();
 app.use(cors({
   origin: [
      "http://localhost:5173",
-    "https://frontend-login-app-mini.vercel.app",
+     "https://frontend-login-app-mini.vercel.app",
+     "https://frontend-login-app2.vercel.app"
   ],
   methods: "GET,POST,PUT,DELETE",
   credentials: true,
