@@ -16,6 +16,9 @@ export const registerUser = async (req, res) => {
       user: { id: user._id, name: user.name, email: user.email, role: user.role }
     });
   } catch (err) {
+    // ---- THIS IS THE NEW LINE ----
+    console.error(err); 
+    // ----------------------------
     res.status(500).json({ message: "Server error", error: err.message });
   }
 };
@@ -35,12 +38,20 @@ export const loginUser = async (req, res) => {
       user: { id: user._id, name: user.name, email: user.email, role: user.role }
     });
   } catch (err) {
+    // You should add logging here too
+    console.error(err);
     res.status(500).json({ message: "Server error", error: err.message });
   }
 };
 
 export const getMe = async (req, res) => {
-  // req.user is injected by auth middleware
-  const user = await User.findById(req.user.id).select("-password");
-  res.json({ user });
+  try {
+    // req.user is injected by auth middleware
+    const user = await User.findById(req.user.id).select("-password");
+    res.json({ user });
+  } catch (err) {
+    // And here
+    console.error(err);
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
 };
